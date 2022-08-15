@@ -160,7 +160,7 @@ const updateSpreadsheet = async (entries: BudgetEntry[], month: number) => {
       throw new Error(`Could not locate column for month: ${month}`);
     }
 
-    const monthColumn = monthRange[0];
+    const monthColumn = monthRange.replace(/\d/g, '');
 
     values.forEach((columns, rowIndex) => {
       if (
