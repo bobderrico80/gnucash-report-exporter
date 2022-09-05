@@ -117,7 +117,8 @@ const getNextColumn = (startingRange: string | null, offset: number) => {
     return startingRange;
   }
 
-  const [column, row] = startingRange;
+  const column = startingRange.replace(/\d+/, '');
+  const row = startingRange.replace(/\D+/, '');
 
   const columnIndex = getIndexFromColumn(column);
   const offsetIndex = columnIndex + offset;
