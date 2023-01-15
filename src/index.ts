@@ -15,8 +15,8 @@ const logger = console;
 dotenv.config();
 
 const { GOOGLE_SPREADSHEET_ID } = process.env;
-const RANGE = 'A:AO';
-const CODE_COLUMN = 'AO';
+const RANGE = 'A:AQ';
+const CODE_COLUMN = 'AQ';
 
 const MONTH_MAP = new Map([
   [1, 'January'],
@@ -34,8 +34,18 @@ const MONTH_MAP = new Map([
 ]);
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const DAY_OF_YEAR_LABEL = 'Day of Year:';
 
 const codeRowMap = new Map<string, number>();
+
+const getDayOfYear = () => {
+  const now = new Date();
+  const nowInMs = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  const startOfYear = Date.UTC(now.getFullYear(), 0, 0);
+  const msSinceStartOfYear = nowInMs - startOfYear;
+  const daysSinceStartOfYear = msSinceStartOfYear / 24 / 60 / 60 / 1000;
+  return daysSinceStartOfYear;
+}
 
 const getColumnFromIndex = (index: number) => {
   if (index >= LETTERS.length * LETTERS.length + LETTERS.length) {
@@ -129,8 +139,8 @@ const getNextColumn = (startingRange: string | null, offset: number) => {
 const CODE_COLUMN_INDEX = getIndexFromColumn(CODE_COLUMN);
 
 const updateSpreadsheet = async (entries: BudgetEntry[], month: number) => {
-  console.log('month', month);
-  logger.info('Updating spreadsheet...');
+
+  logger.info(`Updating spreadsheet with data for month #${month}`);
   try {
     const auth = new google.auth.GoogleAuth({
       keyFilename: './keyFile.json',
@@ -193,6 +203,22 @@ const updateSpreadsheet = async (entries: BudgetEntry[], month: number) => {
       });
     });
 
+    const dayOfYear = getDayOfYear();
+    const dayOfYearRange = getNextColumn(findRange(DAY_OF_YEAR_LABEL, values), 1);
+
+    if (!dayOfYearRange) {
+      throw new Error(`Day of year could not be found for range: ${dayOfYearRange}`);
+    }
+
+    logger.info(
+      `Will insert day of year ${dayOfYear} into ${dayOfYearRange}`
+    );
+
+    dataToInsert.push({
+      range: dayOfYearRange,
+      values: [[dayOfYear]]
+    })
+
     await sheets.spreadsheets.values.batchUpdate({
       spreadsheetId: GOOGLE_SPREADSHEET_ID,
       requestBody: {
@@ -236,9 +262,9 @@ totalRows.each((_, row) => {
     .text()
     .trim()
     .replace(/^(\d*).*$/, '$1');
-  const spent = parseFloat(
+  const spent = Math.abs(parseFloat(
     $row.find('.total-number-cell').text().replace(/[$,]/g, '')
-  );
+  ));
 
   if (category !== 'Grand Total') {
     entries.push({ category, spent, code });
