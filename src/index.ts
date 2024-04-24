@@ -19,18 +19,18 @@ const RANGE = 'A:AQ';
 const CODE_COLUMN = 'AQ';
 
 const MONTH_MAP = new Map([
-  [1, 'January'],
-  [2, 'February'],
-  [3, 'March'],
-  [4, 'April'],
-  [5, 'May'],
-  [6, 'June'],
-  [7, 'July'],
-  [8, 'August'],
-  [9, 'September'],
-  [10, 'October'],
-  [11, 'November'],
-  [12, 'December'],
+  [1, 'January 2025'],
+  [2, 'February 2025'],
+  [3, 'March 2025'],
+  [4, 'April 2024'],
+  [5, 'May 2024'],
+  [6, 'June 2024'],
+  [7, 'July 2024'],
+  [8, 'August 2024'],
+  [9, 'September 2024'],
+  [10, 'October 2024'],
+  [11, 'November 2024'],
+  [12, 'December 2024'],
 ]);
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -41,7 +41,7 @@ const codeRowMap = new Map<string, number>();
 const getDayOfYear = () => {
   const now = new Date();
   const nowInMs = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
-  const startOfYear = Date.UTC(now.getFullYear(), 0, 0);
+  const startOfYear = Date.UTC(2024, 3, 0); // April 1st, 2024, start of budget year
   const msSinceStartOfYear = nowInMs - startOfYear;
   const daysSinceStartOfYear = msSinceStartOfYear / 24 / 60 / 60 / 1000;
   return daysSinceStartOfYear;
