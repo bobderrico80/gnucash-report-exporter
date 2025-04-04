@@ -160,5 +160,5 @@ const updateSpreadsheet = async (entries: BudgetEntry[], month: number) => {
   });
 
   await updateSpreadsheet(entries, month);
-  console.log('Update complete!')
+  logger.info('Update complete!')
 })()
