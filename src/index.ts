@@ -35,7 +35,8 @@ const MONTH_MAP = new Map([
 const codeRowMap = new Map<string, number>();
 
 const CODE_COLUMN_INDEX = 0;
-const ACTUAL_COLUMN = 'G'
+const ACTUAL_COLUMN = 'G';
+const LAST_UPDATED_RANGE = 'J1';
 
 const updateSpreadsheet = async (entries: BudgetEntry[], month: number) => {
   logger.info(`Updating spreadsheet with data for month #${month}`);
@@ -96,6 +97,15 @@ const updateSpreadsheet = async (entries: BudgetEntry[], month: number) => {
         values: [[entry.spent]],
       });
     });
+
+    // Add last updated timestamp
+    const timestamp = new Date().toLocaleString();
+    const timeStampRange = `${monthString}!${LAST_UPDATED_RANGE}`;
+    logger.info(`Will insert timestamp ${timestamp} into ${timeStampRange}`);
+    dataToInsert.push({
+      range: timeStampRange,
+      values: [[timestamp]]
+    })
 
     if (!process.env.DRY_RUN) {
       await sheets.spreadsheets.values.batchUpdate({
