@@ -36,7 +36,7 @@ const codeRowMap = new Map<string, number>();
 
 const CODE_COLUMN_INDEX = 0;
 const ACTUAL_COLUMN = 'G';
-const LAST_UPDATED_RANGE = 'J1';
+const LAST_UPDATED_RANGE = 'K1';
 
 const updateSpreadsheet = async (entries: BudgetEntry[], month: number) => {
   logger.info(`Updating spreadsheet with data for month #${month}`);
